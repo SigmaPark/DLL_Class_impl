@@ -9,6 +9,7 @@ namespace prac
 	class Person;
 
 }
+//========//========//========//========//=======#//========//========//========//========//=======#
 
 
 class prac::Person
@@ -22,9 +23,10 @@ public:
 
 	static void Hello(Person const& person) noexcept; 
 
+	class impl;
+
 private:
-	char const* _name;
-	int _age;
+	impl* _pimpl;
 };
 
 

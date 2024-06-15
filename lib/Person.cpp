@@ -10,7 +10,7 @@ public:
 	char const* name() const noexcept;
 	int age() const noexcept;
 
-	static void Hello(impl const& person) noexcept;
+	static void Hello(Person const& person) noexcept;
 
 private:
 	char const* _name;
@@ -30,7 +30,7 @@ int prac::Person::impl
 ::	age() const noexcept{  return _age;  }
 
 
-void prac::Person::impl::Hello(impl const& person) noexcept
+void prac::Person::impl::Hello(Person const& person) noexcept
 {
 	std::cout
 	<<	"Hello. My name is " << person.name() << " and I'm " << person.age() << " years old." 
@@ -65,8 +65,8 @@ int prac::dll::Person_impl_age(Person::impl const* const p)
 }
 
 
-void prac::dll::Person_impl_Hello(Person::impl const* const person)
+void prac::dll::Person_impl_Hello(Person const& person)
 {
-	Person::impl::Hello(*person);
+	Person::impl::Hello(person);
 }
 //========//========//========//========//=======#//========//========//========//========//=======#

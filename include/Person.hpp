@@ -55,7 +55,7 @@ namespace prac::dll
 		int Person_impl_age(Person::impl const* const self);
 
 		__PERSON_DLL_DECLSPEC
-		void Person_impl_Hello(Person::impl const* const person);
+		void Person_impl_Hello(Person const& person);
 	}
 
 }
@@ -64,16 +64,15 @@ namespace prac::dll
 //========//========//========//========//=======#//========//========//========//========//=======#
 
 
-prac::Person
-::	Person(char const* const name_, int const age_) 
+prac::Person::Person(char const* const name_, int const age_) 
 :	_pimpl( dll::Create_Person_impl(name_, age_) ){}
 
-prac::Person
-::	~Person(){  dll::Destroy_Person_impl(_pimpl);  }
+prac::Person::~Person(){  dll::Destroy_Person_impl(_pimpl);  }
 
 char const* prac::Person::name() const noexcept{  return dll::Person_impl_name(_pimpl);  }
 int prac::Person::age() const noexcept{  return dll::Person_impl_age(_pimpl);  }
-void prac::Person::Hello(Person const& person) noexcept{  dll::Person_impl_Hello(person._pimpl);  }
+
+void prac::Person::Hello(Person const& person) noexcept{  dll::Person_impl_Hello(person);  }
 
 
 #endif // end of #ifndef _PRAC_PERSON_

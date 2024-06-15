@@ -39,13 +39,13 @@ void prac::Person::impl::Hello(impl const& person) noexcept
 //========//========//========//========//=======#//========//========//========//========//=======#
 
 
-prac::Person::impl* prac::__Create_Person_impl(char const* const name_, int const age_)
+prac::Person::impl* prac::dll::Create_Person_impl(char const* const name_, int const age_)
 {
 	return new Person::impl(name_, age_);
 }
 
 
-void prac::__Destroy_Person_impl(Person::impl*& p)
+void prac::dll::Destroy_Person_impl(Person::impl*& p)
 {
 	if(p != nullptr)
 		delete p,  
@@ -53,19 +53,19 @@ void prac::__Destroy_Person_impl(Person::impl*& p)
 }
 
 
-char const* prac::__Person_impl_name(Person::impl const* const p)
+char const* prac::dll::Person_impl_name(Person::impl const* const p)
 {
 	return p->name();
 }
 
 
-int prac::__Person_impl_age(Person::impl const* const p)
+int prac::dll::Person_impl_age(Person::impl const* const p)
 {
 	return p->age();
 }
 
 
-void prac::__Person_impl_Hello(Person::impl const* const person)
+void prac::dll::Person_impl_Hello(Person::impl const* const person)
 {
 	Person::impl::Hello(*person);
 }

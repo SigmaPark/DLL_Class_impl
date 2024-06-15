@@ -12,3 +12,5 @@ target_link_libraries(
 	hello_dll_class PRIVATE
 	person
 )
+
+target_compile_features(hello_dll_class PRIVATE cxx_std_17)

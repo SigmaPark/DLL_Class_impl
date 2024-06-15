@@ -2,15 +2,23 @@
 #include <iostream>
 
 
-class prac::Person::impl
+namespace prac::impl
+{
+
+	class Person;
+
+}
+
+
+class prac::impl::Person
 {
 public:
-	impl(char const* const name_, int const age_);
+	Person(char const* const name_, int const age_);
 
 	char const* name() const noexcept;
 	int age() const noexcept;
 
-	static void Hello(Person const& person) noexcept;
+	static void Hello(prac::Person const& person) noexcept;
 
 private:
 	char const* _name;
@@ -18,19 +26,19 @@ private:
 };
 
 
-prac::Person::impl
-::	impl(char const* const name_, int const age_) : _name(name_), _age(age_){}
+prac::impl::Person
+::	Person(char const* const name_, int const age_) : _name(name_), _age(age_){}
 
 
-char const* prac::Person::impl
+char const* prac::impl::Person
 ::	name() const noexcept{  return _name;  }
 
 
-int prac::Person::impl
+int prac::impl::Person
 ::	age() const noexcept{  return _age;  }
 
 
-void prac::Person::impl::Hello(Person const& person) noexcept
+void prac::impl::Person::Hello(prac::Person const& person) noexcept
 {
 	std::cout
 	<<	"Hello. My name is " << person.name() << " and I'm " << person.age() << " years old." 
@@ -39,34 +47,45 @@ void prac::Person::impl::Hello(Person const& person) noexcept
 //========//========//========//========//=======#//========//========//========//========//=======#
 
 
-prac::Person::impl* prac::dll::Create_Person_impl(char const* const name_, int const age_)
+static prac::impl::Person* To_impl(void* const p)
 {
-	return new Person::impl(name_, age_);
+	return reinterpret_cast<prac::impl::Person*>(p);
+}
+
+static prac::impl::Person const* To_impl(void const* const p)
+{
+	return reinterpret_cast<prac::impl::Person const*>(p);
 }
 
 
-void prac::dll::Destroy_Person_impl(Person::impl*& p)
+void* prac::dll::Create_Person_impl(char const* const name, int const age)
 {
-	if(p != nullptr)
-		delete p,  
-		p = nullptr;
+	return new impl::Person(name, age);
 }
 
 
-char const* prac::dll::Person_impl_name(Person::impl const* const p)
+void prac::dll::Destroy_Person_impl(void** const pp)
 {
-	return p->name();
+	if(*pp != nullptr)
+		delete ::To_impl(*pp),  
+		*pp = nullptr;
 }
 
 
-int prac::dll::Person_impl_age(Person::impl const* const p)
+char const* prac::dll::Person_impl_name(void const* const p)
 {
-	return p->age();
+	return ::To_impl(p)->name();
+}
+
+
+int prac::dll::Person_impl_age(void const* const p)
+{
+	return ::To_impl(p)->age();
 }
 
 
 void prac::dll::Person_impl_Hello(Person const& person)
 {
-	Person::impl::Hello(person);
+	impl::Person::Hello(person);
 }
 //========//========//========//========//=======#//========//========//========//========//=======#

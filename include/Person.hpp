@@ -23,10 +23,8 @@ public:
 
 	static void Hello(Person const& person) noexcept; 
 
-	class impl;
-
 private:
-	impl* _pimpl;
+	void* _pimpl;
 };
 //========//========//========//========//=======#//========//========//========//========//=======#
 
@@ -43,16 +41,16 @@ namespace prac::dll
 	extern "C"
 	{
 		__PERSON_DLL_DECLSPEC
-		Person::impl* Create_Person_impl(char const* const name_, int const age_);
+		void* Create_Person_impl(char const* const name, int const age);
 
 		__PERSON_DLL_DECLSPEC
-		void Destroy_Person_impl(Person::impl*& self);
+		void Destroy_Person_impl(void** const self_p);
 
 		__PERSON_DLL_DECLSPEC
-		char const* Person_impl_name(Person::impl const* const self);
+		char const* Person_impl_name(void const* const self);
 
 		__PERSON_DLL_DECLSPEC
-		int Person_impl_age(Person::impl const* const self);
+		int Person_impl_age(void const* const self);
 
 		__PERSON_DLL_DECLSPEC
 		void Person_impl_Hello(Person const& person);
@@ -67,7 +65,7 @@ namespace prac::dll
 prac::Person::Person(char const* const name_, int const age_) 
 :	_pimpl( dll::Create_Person_impl(name_, age_) ){}
 
-prac::Person::~Person(){  dll::Destroy_Person_impl(_pimpl);  }
+prac::Person::~Person(){  dll::Destroy_Person_impl(&_pimpl);  }
 
 char const* prac::Person::name() const noexcept{  return dll::Person_impl_name(_pimpl);  }
 int prac::Person::age() const noexcept{  return dll::Person_impl_age(_pimpl);  }

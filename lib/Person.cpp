@@ -7,7 +7,11 @@ namespace prac::impl
 
 	class Person;
 
+	static Person& To_Person(void* const p) noexcept;
+	static Person const& To_Person(void const* const p) noexcept;
+
 }
+//========//========//========//========//=======#//========//========//========//========//=======#
 
 
 class prac::impl::Person
@@ -44,18 +48,19 @@ void prac::impl::Person::Hello(prac::Person const& person) noexcept
 	<<	"Hello. My name is " << person.name() << " and I'm " << person.age() << " years old." 
 	<<	std::endl;
 }
+//--------//--------//--------//--------//-------#//--------//--------//--------//--------//-------#
+
+
+prac::impl::Person& prac::impl::To_Person(void* const p) noexcept
+{
+	return *reinterpret_cast<Person*>(p);
+}
+
+prac::impl::Person const& prac::impl::To_Person(void const* const p) noexcept
+{
+	return *reinterpret_cast<Person const*>(p);
+}
 //========//========//========//========//=======#//========//========//========//========//=======#
-
-
-static prac::impl::Person* To_impl(void* const p)
-{
-	return reinterpret_cast<prac::impl::Person*>(p);
-}
-
-static prac::impl::Person const* To_impl(void const* const p)
-{
-	return reinterpret_cast<prac::impl::Person const*>(p);
-}
 
 
 void* prac::dll::Create_Person_impl(char const* const name, int const age)
@@ -67,20 +72,20 @@ void* prac::dll::Create_Person_impl(char const* const name, int const age)
 void prac::dll::Destroy_Person_impl(void** const pp)
 {
 	if(*pp != nullptr)
-		delete ::To_impl(*pp),  
+		delete &impl::To_Person(*pp),  
 		*pp = nullptr;
 }
 
 
 char const* prac::dll::Person_impl_name(void const* const p)
 {
-	return ::To_impl(p)->name();
+	return impl::To_Person(p).name();
 }
 
 
 int prac::dll::Person_impl_age(void const* const p)
 {
-	return ::To_impl(p)->age();
+	return impl::To_Person(p).age();
 }
 
 

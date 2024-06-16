@@ -71,11 +71,11 @@ void prac::dll::Destruct_Person_impl(void** const pp)
 		*pp = nullptr;
 }
 
-void* prac::dll::Copy_Assign_Person_impl(void* const self, void const* const person)
+void* prac::dll::Copy_Assign_Person_impl(void** const self_p, void const* const person)
 {
-	*reinterpret_cast<impl::Person*>(self) = *reinterpret_cast<impl::Person const*>(person);
+	*reinterpret_cast<impl::Person*>(*self_p) = *reinterpret_cast<impl::Person const*>(person);
 
-	return self;
+	return *self_p;
 }
 
 void* prac::dll::Move_Assign_Person_impl(void** const self_p, void** const person_p)
@@ -85,14 +85,6 @@ void* prac::dll::Move_Assign_Person_impl(void** const self_p, void** const perso
 	*person_p = nullptr;
 
 	return res;
-}
-
-void prac::dll::Person_impl_swap(void** const self_p, void** const person_p)
-{
-	void* const temp = *self_p;
-
-	*self_p = *person_p;
-	*person_p = temp;
 }
 
 

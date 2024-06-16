@@ -16,12 +16,20 @@ class prac::Person
 {
 public:
 	Person(char const* const name_, int const age_);
+	Person(Person const& person);
+	Person(Person&& person) noexcept;
+
 	~Person();
+
+	Person& operator=(Person const& person);
+	Person& operator=(Person&& person) noexcept;
+
+	void swap(Person& person) noexcept;
 
 	char const* name() const noexcept;
 	int age() const noexcept;
 
-	static void Hello(Person const& person) noexcept; 
+	static void How_to_work(Person const& person) noexcept; 
 
 private:
 	void* _pimpl;
@@ -41,10 +49,25 @@ namespace prac::dll
 	extern "C"
 	{
 		__PERSON_DLL_DECLSPEC
-		void* Create_Person_impl(char const* const name, int const age);
+		void* Construct_Person_impl(char const* const name, int const age);
 
 		__PERSON_DLL_DECLSPEC
-		void Destroy_Person_impl(void** const self_p);
+		void* Copy_Construct_Person_impl(void const* const person);
+
+		__PERSON_DLL_DECLSPEC
+		void* Move_Construct_Person_impl(void** const person_p);
+
+		__PERSON_DLL_DECLSPEC
+		void Destruct_Person_impl(void** const self_p);
+
+		__PERSON_DLL_DECLSPEC
+		void* Copy_Assign_Person_impl(void* const self, void const* const person);
+
+		__PERSON_DLL_DECLSPEC
+		void* Move_Assign_Person_impl(void** const self_p, void** const person_p);
+
+		__PERSON_DLL_DECLSPEC
+		void Person_impl_swap(void** const self_p, void** const person_p);
 
 		__PERSON_DLL_DECLSPEC
 		char const* Person_impl_name(void const* const self);
@@ -53,7 +76,7 @@ namespace prac::dll
 		int Person_impl_age(void const* const self);
 
 		__PERSON_DLL_DECLSPEC
-		void Person_impl_Hello(Person const& person);
+		void Person_impl_How_to_work(Person const& person);
 	}
 
 }
@@ -63,14 +86,35 @@ namespace prac::dll
 
 
 prac::Person::Person(char const* const name_, int const age_) 
-:	_pimpl( dll::Create_Person_impl(name_, age_) ){}
+:	_pimpl( dll::Construct_Person_impl(name_, age_) ){}
 
-prac::Person::~Person(){  dll::Destroy_Person_impl(&_pimpl);  }
+prac::Person::Person(Person const& person)
+:	_pimpl( dll::Copy_Construct_Person_impl(person._pimpl) ){}
+
+prac::Person::Person(Person&& person) noexcept
+:	_pimpl( dll::Move_Construct_Person_impl(&person._pimpl) ){}
+
+prac::Person::~Person(){  dll::Destruct_Person_impl(&_pimpl);  }
+
+prac::Person& prac::Person::operator=(Person const& person)
+{
+	return *reinterpret_cast<Person*>( dll::Copy_Assign_Person_impl(_pimpl, person._pimpl) );
+}
+
+prac::Person& prac::Person::operator=(Person&& person) noexcept
+{
+	return *reinterpret_cast<Person*>( dll::Move_Assign_Person_impl(&_pimpl, &person._pimpl) );
+}
+
+void prac::Person
+::	swap(Person& person) noexcept{  dll::Person_impl_swap(&_pimpl, &person._pimpl);  }
+
 
 char const* prac::Person::name() const noexcept{  return dll::Person_impl_name(_pimpl);  }
 int prac::Person::age() const noexcept{  return dll::Person_impl_age(_pimpl);  }
 
-void prac::Person::Hello(Person const& person) noexcept{  dll::Person_impl_Hello(person);  }
+void prac::Person
+::	How_to_work(Person const& person) noexcept{  dll::Person_impl_How_to_work(person);  }
 
 
 #endif // end of #ifndef _PRAC_PERSON_

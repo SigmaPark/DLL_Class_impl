@@ -1,14 +1,10 @@
 #include "Person.hpp"
-#include <iostream>
 
 
 namespace prac::impl
 {
 
 	class Person;
-
-	static Person* To_Person(void* const p) noexcept;
-	static Person const* To_Person(void const* const p) noexcept;
 
 }
 //========//========//========//========//=======#//========//========//========//========//=======#
@@ -22,7 +18,7 @@ public:
 	char const* name() const noexcept;
 	int age() const noexcept;
 
-	static void How_to_work(prac::Person const& person) noexcept;
+	static char const* How_to_work() noexcept;
 
 private:
 	char const* _name;
@@ -42,21 +38,9 @@ int prac::impl::Person
 ::	age() const noexcept{  return _age;  }
 
 
-void prac::impl::Person::How_to_work(prac::Person const& person) noexcept
+char const* prac::impl::Person::How_to_work() noexcept
 {
-	std::cout << "My dll implementation works by pimpl pattern." << std::endl;
-}
-//--------//--------//--------//--------//-------#//--------//--------//--------//--------//-------#
-
-
-prac::impl::Person* prac::impl::To_Person(void* const p) noexcept
-{
-	return reinterpret_cast<Person*>(p);
-}
-
-prac::impl::Person const* prac::impl::To_Person(void const* const p) noexcept
-{
-	return reinterpret_cast<Person const*>(p);
+	return "DLL implementation works by pimpl pattern.";
 }
 //========//========//========//========//=======#//========//========//========//========//=======#
 
@@ -68,7 +52,7 @@ void* prac::dll::Construct_Person_impl(char const* const name, int const age)
 
 void* prac::dll::Copy_Construct_Person_impl(void const* const person)
 {
-	return new impl::Person( *impl::To_Person(person) );
+	return new impl::Person( *reinterpret_cast<impl::Person const*>(person) );
 }
 
 void* prac::dll::Move_Construct_Person_impl(void** const person_p)
@@ -83,13 +67,13 @@ void* prac::dll::Move_Construct_Person_impl(void** const person_p)
 void prac::dll::Destruct_Person_impl(void** const pp)
 {
 	if(*pp != nullptr)
-		delete impl::To_Person(*pp),  
+		delete reinterpret_cast<impl::Person const*>(*pp),  
 		*pp = nullptr;
 }
 
 void* prac::dll::Copy_Assign_Person_impl(void* const self, void const* const person)
 {
-	*impl::To_Person(self) = *impl::To_Person(person);
+	*reinterpret_cast<impl::Person*>(self) = *reinterpret_cast<impl::Person const*>(person);
 
 	return self;
 }
@@ -114,16 +98,13 @@ void prac::dll::Person_impl_swap(void** const self_p, void** const person_p)
 
 char const* prac::dll::Person_impl_name(void const* const p)
 {
-	return impl::To_Person(p)->name();
+	return reinterpret_cast<impl::Person const*>(p)->name();
 }
 
 int prac::dll::Person_impl_age(void const* const p)
 {
-	return impl::To_Person(p)->age();
+	return reinterpret_cast<impl::Person const*>(p)->age();
 }
 
-void prac::dll::Person_impl_How_to_work(Person const& person)
-{
-	impl::Person::How_to_work(person);
-}
+char const* prac::dll::Person_impl_How_to_work(){  return impl::Person::How_to_work();  }
 //========//========//========//========//=======#//========//========//========//========//=======#

@@ -7,9 +7,9 @@ static void Hello(prac::Person const& person)
 	std::cout
 	<<	"Hello, my name is " << person.name() 
 	<<	" and I'm " << person.age() << " years old." 
+	<<	std::endl
+	<<	prac::Person::How_to_work()
 	<<	std::endl;
-
-	prac::Person::How_to_work(person);
 }
 
 

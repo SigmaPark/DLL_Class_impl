@@ -29,7 +29,7 @@ public:
 	char const* name() const noexcept;
 	int age() const noexcept;
 
-	static void How_to_work(Person const& person) noexcept; 
+	static char const* How_to_work() noexcept; 
 
 private:
 	void* _pimpl;
@@ -76,7 +76,7 @@ namespace prac::dll
 		int Person_impl_age(void const* const self);
 
 		__PERSON_DLL_DECLSPEC
-		void Person_impl_How_to_work(Person const& person);
+		char const* Person_impl_How_to_work();
 	}
 
 }
@@ -112,9 +112,7 @@ void prac::Person
 
 char const* prac::Person::name() const noexcept{  return dll::Person_impl_name(_pimpl);  }
 int prac::Person::age() const noexcept{  return dll::Person_impl_age(_pimpl);  }
-
-void prac::Person
-::	How_to_work(Person const& person) noexcept{  dll::Person_impl_How_to_work(person);  }
+char const* prac::Person::How_to_work() noexcept{  return dll::Person_impl_How_to_work();  }
 
 
 #endif // end of #ifndef _PRAC_PERSON_
